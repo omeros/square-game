@@ -1,4 +1,4 @@
-# square-game
+# Largest-square-game
 
 ## Project setup
 ```
