@@ -1,10 +1,10 @@
 <template>
-  <div>
-    <BoundPreview :bound="props.mainBound"  :type="true"  />
+  <div class="bound-list-container">
+    <BoundPreview :bound="props.answerBound"  :main="false" :answer="true" />
+    <BoundPreview :bound="props.mainBound"  :main="true" :answer="false" />
     <div v-for="(bound, i) in props.bounds" :key="i">
-      Bound {{ i + 1 }}
-        <BoundPreview :bound="bound" :type="false" />
-      </div>
+      <BoundPreview :bound="bound" :main="false" :answer="false" />
+    </div>
   </div>
 </template>
 
@@ -20,6 +20,15 @@ const props = defineProps({
   mainBound: {
       type: Object,
       default: () => ({})
+  },
+  answerBound: {
+      type: Object,
+      default: () => ({})
   }
 });
 </script>
+<style>
+.bound-list-container{
+  position: relative;
+}
+</style>

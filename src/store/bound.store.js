@@ -12,8 +12,9 @@ export const boundStore = defineStore('bound.store', {
   //     }
   // },
   state: () => ({
-    mainBound: { left: 10, right: 1500, up: 500, down: 0  },
-    bounds: [ {left: 20, right: 100, up: 50, down: 0  }]
+    mainBound: { left: null, right: null, up: null, down: null  },
+    bounds: [],
+    answerBound: { left: null, right: null, up: null, down: null  }
   }),
   getters: {
     getBounds: (state) => {
@@ -44,8 +45,25 @@ export const boundStore = defineStore('bound.store', {
         // })
         this.mainBound = bound
                 console.log('store addMainBound-this.mainBound2:',this.mainBound);
-    }
+    },
+  clearBounds(){
+    // $patch({
+    //   mainBound :  { left: 0, right: 0, up: 0, down: 0  },
+    //   bounds : [{ left: 0, right: 0, up: 0, down: 0  } ] }
+    // )
+    this.mainBound =  { left: null, right: null, up: null, down: null  }
+    this.answerBound =  { left: null, right: null, up: null, down: null  }
+    this.bounds = []
+    //console.log('clearBounds - this.bounds',this.bounds);
   },
+  updateAnswerBound(answeBound){
+    console.log('updateAnswerBound:',answeBound);
+    this.answerBound = answeBound
+  }
+  },
+  sendDataToAgoquest(){
+
+  }
 })
 
 
