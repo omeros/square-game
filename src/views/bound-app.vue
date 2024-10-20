@@ -182,7 +182,10 @@ import{reactive,ref,onUnmounted } from 'vue'
         } catch (error) {
           console.error('Error running bound service:', error)
         } finally {
-          runBtn.value = 'lightgrey' // Reset the button color if needed
+          runBtn.value = 'lightgreen' // Reset the button color if needed
+          setTimeout(()=>{
+            runBtn.value = 'lightgrey' // Reset the button color if needed
+          },500)
         }
     }else{
       console.log('calculation in progress!');
