@@ -276,7 +276,8 @@ body{
     margin: 0.2vw;
     background-color: v-bind('configBtn');
     padding: 0.4vw 0.6vw;
-    
+    transition: background-color 1s;
+
 }
 /* .run-btn:hover{
   width: 4vw;
