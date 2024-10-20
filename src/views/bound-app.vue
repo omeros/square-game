@@ -5,34 +5,36 @@
       <div class="input-container" style="padding: 1.5vw 1vw;"> 
         <div style="display: flex; ">
           <div>
-            left<input class="bound-input" type="number" v-model="mainBoundX1">
-            right<input class="bound-input" type="number" v-model="mainBoundX2">
-            UP<input class="bound-input" type="number" v-model="mainBoundY1">
+            LEFT <input class="bound-input" type="number" v-model="mainBoundX1">
+            RIGHT <input class="bound-input" type="number" v-model="mainBoundX2">
+            UP <input class="bound-input" type="number" v-model="mainBoundY1">
             DOWN <input class="bound-input" type="number" v-model="mainBoundY2">
-          </div>
-          <div style="padding: 0.2vw">
-            <button id="big-add"  class="config-btn"  style="cursor: pointer; margin-left: 1vw;"  @click="onAddMainBound()">Main Rectangle</button>
           </div>
         </div>
         <div  style="display: flex;">
           <div >
-            left<input class="bound-input" type="number" v-model="coverBoundX1">
-            right<input class="bound-input" type="number" v-model="coverBoundX2">
-            UP<input class="bound-input" type="number" v-model="coverBoundY1">
-            DOWN<input class="bound-input" type="number" v-model="coverBoundY2">
+            LEFT <input class="bound-input" type="number" v-model="coverBoundX1">
+            RIGHT <input class="bound-input" type="number" v-model="coverBoundX2">
+            UP <input class="bound-input" type="number" v-model="coverBoundY1">
+            DOWN <input class="bound-input" type="number" v-model="coverBoundY2">
           </div>
-          <button id="small-add" class="config-btn"  style="cursor: pointer; margin-left: 1vw;"   @click="onAddCoverBound()"> Cover Rectangle</button>
         </div>
       </div>  
-      <div class="defalutMainbound">
-        <button class="config-btn" @click="defalutMainbound()">i'm lazy</button>
-      </div>
-      <div class="config-btn-container">
-        <button class="config-btn" @click="onClearBounds()">New</button>
-        <button class="config-btn" @click="onRandomBounds()">Random</button>
-      </div>
-      <div class="run-btn-container">
-        <button class="run-btn"   @click="run()">Run</button>
+      <div class="btn-container">
+        <div class="add-rec-btn" style="">
+          <button id="big-add"  class="config-btn"  style="cursor: pointer; margin-left: 0vw;"  @click="onAddMainBound()">Main Rectangle</button>
+          <button id="small-add" class="config-btn"  style="cursor: pointer; margin-left: 0vw;"   @click="onAddCoverBound()"> Cover Rectangle</button>
+        </div>
+        <div class="defalutMainbound">
+          <button class="config-btn" :class="{'lazy-btn-activ': isLazy }" @click="defalutMainbound()">i'm lazy</button>
+        </div>
+        <div class="config-btn-container">
+          <button class="config-btn"  :class="{'finish-btn-activ': isFinished }" @click="onClearBounds()">New</button>
+          <button class="config-btn"  :class="{'random-btn-activ': isRandom }" @click="onRandomBounds()">Random</button>
+        </div>
+        <div class="run-btn-container">
+          <button class="run-btn"   :class="{ 'run-btn-active': isCalculate, 'run-btn-debaunce': isDebounce }"   @click="run()" :disabled="isCalculate">{{ isCalculate ? 'Calculating' : isFinished ? 'Finished' : 'Run' }} </button>
+        </div>
       </div>
     </div>
   </div>
@@ -49,17 +51,29 @@ import { storeToRefs } from 'pinia'
 import {boundService} from '../services/api.service'
 import BoundList  from '../cmps/bound-list.vue'
 import {boundStore} from '../store/bound.store'
-import{reactive,ref} from 'vue'
+import{reactive,ref,onUnmounted } from 'vue'
+
+    onUnmounted(() => {
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+      }
+    });
 
     const storeBound = boundStore()
-    const runBtn = ref('lightgreen') // Make runBtn reactive using ref
-    let configBtn = 'lightgreen'
-    let isCalculate = false
-    // const bounds = storeBound.getBounds
     const {mainBound,bounds,answerBound} = storeToRefs(storeBound)
+    const runBtn = ref('lightgrey') // Make runBtn reactive using ref
+    let configBtn = 'lightgrey'
+    const boundsReactiv = reactive(bounds)
+    const isCalculate = ref(false) // Make isCalculate reactive
+    const isFinished = ref(false) // Make isFinished reactive
+    const isLazy = ref(true) // Make isFinished reactive
+    const isRandom = ref(false) // Make isFinished reactive
+    const isDebounce = ref(false);
+    let debounceTimer = null;
+
+    // const bounds = storeBound.getBounds
     // const mainBound = storeBound.getMainBound
     // const newBound = reactive({ left: 0, rigth: 0, up: 0, down: 0 })
-    const boundsReactiv = reactive(bounds)
     // const mainBoundReactiv = reactive(mainBound)
     // console.log('mainBoundReactiv:',mainBoundReactiv);
     console.log('boundsReactiv:',boundsReactiv);
@@ -103,9 +117,30 @@ import{reactive,ref} from 'vue'
     }
 
     function onClearBounds(){
+      isFinished.value = false
+      isRandom.value = false
+      isLazy.value = true
+      isDebounce.value = false
       storeBound.clearBounds()
     }
     function onRandomBounds(){
+      isRandom.value = true
+
+    // Clear any existing debounce timer
+    if (debounceTimer) {
+      clearTimeout(debounceTimer);
+    }
+    // Reset `isDebounce` to false immediately when the function is called
+    isDebounce.value = false;
+    // Start a new debounce timer
+    debounceTimer = setTimeout(() => {
+      isDebounce.value = true;
+      isRandom.value = false
+      runBtn.value  = 'lightgreen'
+      // Additional actions can be performed here when `isDebounce` becomes true
+    }, 2000); // Debounce duration in milliseconds (e.g., 2000ms = 2 seconds)
+
+
       const screenWidth = window.innerWidth; // Get screen width
       const screenHeight = window.innerHeight; // Get screen height
       const rigth = getRandomInt(0,screenWidth)
@@ -130,18 +165,24 @@ import{reactive,ref} from 'vue'
 
   async function run(){
     console.log('run function!');
-    runBtn.value = '#f1396e'
-    if(!isCalculate){
+    runBtn.value = 'rgb(247, 3, 15)'
+    isRandom.value = false
+    isFinished.value = false
+    isDebounce.value = false
+    clearTimeout(debounceTimer);
+    if(!isCalculate.value){
       try {
           console.log(' run function - !isCalculate');
-          isCalculate = true
+          isCalculate.value = true
           const ans = await boundService.postBoundToAlgoquest(mainBound.value, bounds.value)
           storeBound.updateAnswerBound(ans)
-          isCalculate = false
+          isCalculate.value = false
+          isFinished.value = true
+          isDebounce.value = false;
         } catch (error) {
           console.error('Error running bound service:', error)
         } finally {
-          runBtn.value = 'lightgreen' // Reset the button color if needed
+          runBtn.value = 'lightgrey' // Reset the button color if needed
         }
     }else{
       console.log('calculation in progress!');
@@ -154,6 +195,8 @@ import{reactive,ref} from 'vue'
     // console.log('run bounds:',bounds.value, 'mainBound:',mainBound.value );
   }
   function defalutMainbound(){
+    isLazy.value = false
+    isRandom.value = true
     const mainBound = {
         left: 0,
         right: 1850,
@@ -171,8 +214,12 @@ import{reactive,ref} from 'vue'
 </script>
 
 <style>
+body{
+ margin: 0;
+}
 .body{
   background-color: #f0f2f5;
+ 
 }
 .header-container{
   display: flex;
@@ -185,12 +232,15 @@ import{reactive,ref} from 'vue'
   background-color: #ffffff;
   box-shadow: 6px 5px 20px 0px;
   border-radius: 8px;
-  margin-top: 1vw;
+  margin: 0.5vw  0.5vw;
   width: 70vw;
 
 }
 .bound-input{
   width: 5vw;
+  padding: 0.2vw 0.3vw;
+  border-radius: 8px;
+  margin: 0.2vw;
 }
 .input-containerr{
   /* width: 100vw; */
@@ -203,16 +253,19 @@ import{reactive,ref} from 'vue'
   width: 100vw;
   height: 100vh;
 }
+.btn-container{
+  display: flex;
+}
 .config-btn-container{
   display: flex;
   flex-direction: column; 
   padding: 0vw; 
-  padding-top: 2vw; 
+  padding-top: 1vw; 
 }
 .run-btn-container{
   display: flex;
   flex-direction: column; 
-  padding: 1vw; 
+  padding: 0.3vw; 
   padding-top: 2vw; 
 }
 .config-btn{
@@ -220,29 +273,57 @@ import{reactive,ref} from 'vue'
     margin: 0.2vw;
     background-color: v-bind('configBtn');
     padding: 0.4vw 0.6vw;
-
+    
 }
-.run-btn:hover{
+/* .run-btn:hover{
   width: 4vw;
   height: 2.5vw;
- 
+} */
+
+.run-btn-debaunce{
+  background-color: lightgreen;
 }
 .run-btn{
     cursor: pointer;
     margin: 0.2vw;
     background-color: v-bind('runBtn');
     padding: 0.4vw 0.7vw;
-    width: 3vw;
+    width: 5.3vw;
     height: 2vw;
-    transition: width 2s, height 2s;
-  
+   
+    transition: width 2s, height 2s, background-color 1s, font-size 1s;
 }
+.run-btn-active {
+  width: 7vw;
+  height: 2.5vw;
+  font-size: medium;
+}
+/* .run-btn-debaunce{
+  background-color: lightgreen;
+} */
 .defalutMainbound{
-  padding: 0.5vw; 
-  padding-top: 2vw;
+  /* padding: 0.5vw;  */
+  padding-top: 1vw;
+}
+.add-rec-btn{
+  /* padding: 0.2vw; */
+  margin-left: 0;
+  padding-top: 1vw;
+  display: flex;
+  flex-direction: column;
+}
+.finish-btn-activ{
+  background-color: lightgreen;
+}
+.lazy-btn-activ{
+  background-color: lightgreen;
+}
+.random-btn-activ{
+  background-color: lightgreen;
 }
 button{
   border-radius: 8px;
   font-weight: 700;
+  color: black;
 }
 </style>
