@@ -2,35 +2,19 @@
 <div class="body">
   <div class="header-container">
     <div class="header" >
-      <div class="input-container" style="padding: 1.5vw 1vw;"> 
-        <div style="display: flex; ">
-          <div>
-            LEFT <input class="bound-input" type="number" v-model="mainBoundX1">
-            RIGHT <input class="bound-input" type="number" v-model="mainBoundX2">
-            UP <input class="bound-input" type="number" v-model="mainBoundY1">
-            DOWN <input class="bound-input" type="number" v-model="mainBoundY2">
-          </div>
-        </div>
-        <div  style="display: flex;">
-          <div >
-            LEFT <input class="bound-input" type="number" v-model="coverBoundX1">
-            RIGHT <input class="bound-input" type="number" v-model="coverBoundX2">
-            UP <input class="bound-input" type="number" v-model="coverBoundY1">
-            DOWN <input class="bound-input" type="number" v-model="coverBoundY2">
-          </div>
-        </div>
-      </div>  
       <div class="btn-container">
-        <div class="add-rec-btn" style="">
-          <button id="big-add"  class="config-btn"  style="cursor: pointer; margin-left: 0vw;"  @click="onAddMainBound()">Main Rectangle</button>
-          <button id="small-add" class="config-btn"  style="cursor: pointer; margin-left: 0vw;"   @click="onAddCoverBound()"> Cover Rectangle</button>
-        </div>
-        <div class="defalutMainbound">
-          <button class="config-btn" :class="{'lazy-btn-activ': isLazy }" @click="defalutMainbound()">i'm lazy</button>
-        </div>
-        <div class="config-btn-container">
-          <button class="config-btn"  :class="{'finish-btn-activ': isFinished }" @click="onClearBounds()">New</button>
-          <button class="config-btn"  :class="{'random-btn-activ': isRandom }" @click="onRandomBounds()">Random</button>
+        <div class="btn-container-inner">
+          <div class="add-rec-btn" style="">
+            <button id="big-add"  class="config-add-btn"  style="cursor: pointer; margin-left: 0vw;"  @click="openMainBoundModal()">Main Rectangle</button>
+            <button id="small-add" class="config-add-btn"  style="cursor: pointer; margin-left: 0vw;"   @click="openCoverBoundModal()"> Cover Rectangle</button>
+          </div>
+          <div class="defalutMainbound">
+            <button class="config-btn" :class="{'lazy-btn-activ': isLazy }" @click="defalutMainbound()">i'm lazy</button>
+          </div>
+          <div class="config-btn-container">
+            <button class="new-btn"  :class="{'finish-btn-activ': isFinished }" @click="onClearBounds()">New</button>
+            <button class="random-btn"  :class="{'random-btn-activ': isRandom }" @click="onRandomBounds()">Random</button>
+          </div>
         </div>
         <div class="run-btn-container">
           <button class="run-btn"   :class="{ 'run-btn-active': isCalculate, 'run-btn-debaunce': isDebounce }"   @click="run()" :disabled="isCalculate">{{ isCalculate ? 'Calculating' : isFinished ? 'Finished' : 'Run' }} </button>
@@ -41,6 +25,40 @@
   <div style="height: 82vh;">
     <BoundList :bounds="bounds" :mainBound="mainBound" :answerBound="answerBound"  />
   </div>
+  <Modal v-if="isShowMainBoundModal" @close="isShowMainBoundModal = false">
+    <div class="modal-inner-container">
+      <h2>Main Bound size</h2>
+      <div>
+        <div>
+          Top <input class="bound-input" type="number" v-model="mainBoundY1">
+          Bottom <input class="bound-input" type="number" v-model="mainBoundY2">
+        </div>
+        <div>
+          Left <input class="bound-input" type="number" v-model="mainBoundX1">
+          Right <input class="bound-input" type="number" v-model="mainBoundX2">
+        </div>
+      </div>
+      <button class="modal-btn" @click="onAddMainBound()">Add</button>
+      <button class="modal-btn" @click="isShowMainBoundModal = false">Close Modal</button>
+    </div>
+  </Modal>
+  <MyModal v-if="isShowMCoverBoundModal" @close="isShowMCoverBoundModal = false">
+    <div class="modal-inner-container">
+      <h2>Cover Bound size</h2>
+      <div>
+        <div>
+          Top <input class="bound-input" type="number" v-model="coverBoundY1">
+          Bottom <input class="bound-input" type="number" v-model="coverBoundY2">
+        </div>
+        <div>
+          Left <input class="bound-input" type="number" v-model="coverBoundX1">
+          Right <input class="bound-input" type="number" v-model="coverBoundX2">
+        </div>
+      </div>
+      <button class="modal-btn" @click="onAddCoverBound()">Add</button>
+      <button class="modal-btn" @click="isShowMCoverBoundModal = false">Close Modal</button>
+    </div>
+  </MyModal>
 </div>
 </template>
 
@@ -52,6 +70,7 @@ import {boundService} from '../services/api.service'
 import BoundList  from '../cmps/bound-list.vue'
 import {boundStore} from '../store/bound.store'
 import{reactive,ref,onUnmounted } from 'vue'
+import MyModal from '../cmps/MyModal.vue';
 
     onUnmounted(() => {
       if (debounceTimer) {
@@ -69,6 +88,8 @@ import{reactive,ref,onUnmounted } from 'vue'
     const isLazy = ref(true) // Make isFinished reactive
     const isRandom = ref(false) // Make isFinished reactive
     const isDebounce = ref(false);
+    const isShowMainBoundModal = ref(false);
+    const isShowMCoverBoundModal = ref(false);
     let debounceTimer = null;
 
     // const bounds = storeBound.getBounds
@@ -88,7 +109,15 @@ import{reactive,ref,onUnmounted } from 'vue'
     let coverBoundY1 //ref()
     let coverBoundY2 //ref()
     
+    function openMainBoundModal(){
+      isShowMainBoundModal.value = true
+    }
+    function openCoverBoundModal(){
+      isShowMCoverBoundModal.value = true
+    }
+
     function onAddMainBound(){
+     // isShowMainBoundModal.value = true
       console.log('mainBoundX1:',mainBoundX1);
       console.log('mainBoundX2:',mainBoundX2);
       console.log('mainBoundY1:',mainBoundY1);
@@ -198,12 +227,14 @@ import{reactive,ref,onUnmounted } from 'vue'
     // console.log('run bounds:',bounds.value, 'mainBound:',mainBound.value );
   }
   function defalutMainbound(){
+    const screenWidth = window.innerWidth - (window.innerWidth/50) ; // Get screen width
+    const screenHeight = window.innerHeight - (window.innerHeight/5); // Get screen height
     isLazy.value = false
     isRandom.value = true
     const mainBound = {
         left: 0,
-        right: 1850,
-        up: 700,
+        right: screenWidth,
+        up: screenHeight,
         down: 0
       }
       storeBound.addMainBound(mainBound)
@@ -231,16 +262,18 @@ body{
 }
 .header{
   display: flex; 
+  justify-content: center;
   border: 2px inset  #fcfcfc;
   background-color: #ffffff;
   box-shadow: 6px 5px 20px 0px;
   border-radius: 8px;
   margin: 0.5vw  0.5vw;
-  width: 70vw;
+  width: 30vw;
+  padding: 1vw;
 
 }
 .bound-input{
-  width: 5vw;
+  width: 4vw;
   padding: 0.2vw 0.3vw;
   border-radius: 8px;
   margin: 0.2vw;
@@ -258,18 +291,26 @@ body{
 }
 .btn-container{
   display: flex;
+  width: 30vw;
 }
+.btn-container-inner{
+  display: flex;
+}
+
 .config-btn-container{
   display: flex;
   flex-direction: column; 
   padding: 0vw; 
-  padding-top: 1vw; 
+  padding-top: 0vw; 
 }
-.run-btn-container{
-  display: flex;
-  flex-direction: column; 
-  padding: 0.3vw; 
-  padding-top: 2vw; 
+
+.config-add-btn{
+    cursor: pointer;
+    margin: 0.2vw;
+    background-color: v-bind('configBtn');
+    padding: 0.5vw 0.7vw;
+    transition: background-color 1s;
+
 }
 .config-btn{
     cursor: pointer;
@@ -277,13 +318,25 @@ body{
     background-color: v-bind('configBtn');
     padding: 0.4vw 0.6vw;
     transition: background-color 1s;
-
+}
+.new-btn{
+  cursor: pointer;
+    margin: 0.2vw;
+    background-color: v-bind('configBtn');
+    padding: 0.4vw 0.6vw;
+    transition: background-color 1s;
 }
 /* .run-btn:hover{
   width: 4vw;
   height: 2.5vw;
 } */
 
+.run-btn-container{
+  display: flex;
+  justify-content: center;
+  padding: 0.3vw; 
+  padding-top: 0vw; 
+}
 .run-btn-debaunce{
   background-color: lightgreen;
 }
@@ -294,7 +347,8 @@ body{
     padding: 0.4vw 0.7vw;
     width: 5.3vw;
     height: 2vw;
-   
+    min-width: fit-content;
+    min-height: fit-content;
     transition: width 2s, height 2s, background-color 1s, font-size 1s;
 }
 .run-btn-active {
@@ -307,12 +361,12 @@ body{
 } */
 .defalutMainbound{
   /* padding: 0.5vw;  */
-  padding-top: 1vw;
+  padding-top: 0vw;
 }
 .add-rec-btn{
   /* padding: 0.2vw; */
   margin-left: 0;
-  padding-top: 1vw;
+  padding-top: 0vw;
   display: flex;
   flex-direction: column;
 }
@@ -322,6 +376,13 @@ body{
 .lazy-btn-activ{
   background-color: lightgreen;
 }
+.random-btn{
+  cursor: pointer;
+  margin: 0.2vw;
+  background-color: v-bind('configBtn');
+  padding: 0.4vw 0.6vw;
+  transition: background-color 1s;
+}
 .random-btn-activ{
   background-color: lightgreen;
 }
@@ -329,5 +390,49 @@ button{
   border-radius: 8px;
   font-weight: 700;
   color: black;
+  cursor: pointer;
+}
+
+.modal-btn{
+  width: 7vw;
+  padding: 0.4vw 0.7vw;
+}
+.modal-inner-container{
+  /* display: flex;
+  flex-direction: column;
+  padding: 0vw; */
+}
+@media screen and (max-width: 600px) {
+  .header{
+    width: 70vw;
+  }
+    .btn-container{
+      flex-direction: column;
+      width: 60vw;
+    }
+    .run-btn{
+      width: 18vw;
+      height: 7vw;
+    }
+    .run-btn-active {
+    width: 23vw;
+    height: 10vw;
+    font-size: large;
+  }
+  .config-btn{
+    width: 18vw;
+    height:7vw ;
+  }
+  .config-add-btn{
+    width: 20vw;
+    height: 10vw ;
+    padding: 1vw 1vw;
+  }
+  .random-btn{
+    padding: 3vw 1.5vw;
+  }
+  .new-btn{
+    padding: 3vw;
+  }
 }
 </style>
