@@ -25,7 +25,7 @@
   <div style="height: 82vh;">
     <BoundList :bounds="bounds" :mainBound="mainBound" :answerBound="answerBound"  />
   </div>
-  <Modal v-if="isShowMainBoundModal" @close="isShowMainBoundModal = false">
+  <MyModal v-if="isShowMainBoundModal" @close="isShowMainBoundModal = false">
     <div class="modal-inner-container">
       <h2>Main Bound size</h2>
       <div>
@@ -41,7 +41,7 @@
       <button class="modal-btn" @click="onAddMainBound()">Add</button>
       <button class="modal-btn" @click="isShowMainBoundModal = false">Close Modal</button>
     </div>
-  </Modal>
+  </MyModal>
   <MyModal v-if="isShowMCoverBoundModal" @close="isShowMCoverBoundModal = false">
     <div class="modal-inner-container">
       <h2>Cover Bound size</h2>
