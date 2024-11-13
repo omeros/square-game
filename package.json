@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "start": "vue-cli-service serve",
-    "build": "vue-cli-service build --dest ../../../Algoquest-Nodejs/algoquest-server/public",
+    "build": "vue-cli-service build --dest ../../../Algoquest.js-Nodejs/algoquest.js-server/public",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

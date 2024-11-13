@@ -17,6 +17,7 @@
           </div>
         </div>
         <div class="run-btn-container">
+          <button class="explain-btn" @click="onExplain()">Explain</button>
           <button class="run-btn"   :class="{ 'run-btn-active': isCalculate, 'run-btn-debaunce': isDebounce }"   @click="run()" :disabled="isCalculate">{{ isCalculate ? 'Calculating' : isFinished ? 'Finished' : 'Run' }} </button>
         </div>
       </div>
@@ -27,7 +28,7 @@
   </div>
   <MyModal v-if="isShowMainBoundModal" @close="isShowMainBoundModal = false">
     <div class="modal-inner-container">
-      <h2>Main Bound size</h2>
+      <h2 style="text-align: center;">Main Bound size</h2>
       <div>
         <div>
           Top <input class="bound-input" type="number" v-model="mainBoundY1">
@@ -38,13 +39,15 @@
           Right <input class="bound-input" type="number" v-model="mainBoundX2">
         </div>
       </div>
-      <button class="modal-btn" @click="onAddMainBound()">Add</button>
-      <button class="modal-btn" @click="isShowMainBoundModal = false">Close Modal</button>
+      <div style="display: flex; justify-content: center;">
+        <button class="modal-add-btn" @click="onAddMainBound()">Add</button>
+      <!-- <button class="modal-btn" @click="isShowMainBoundModal = false">Close Modal</button> -->
+      </div>
     </div>
   </MyModal>
   <MyModal v-if="isShowMCoverBoundModal" @close="isShowMCoverBoundModal = false">
     <div class="modal-inner-container">
-      <h2>Cover Bound size</h2>
+      <h2 style="text-align: center;">Cover Bound size</h2>
       <div>
         <div>
           Top <input class="bound-input" type="number" v-model="coverBoundY1">
@@ -55,10 +58,20 @@
           Right <input class="bound-input" type="number" v-model="coverBoundX2">
         </div>
       </div>
-      <button class="modal-btn" @click="onAddCoverBound()">Add</button>
-      <button class="modal-btn" @click="isShowMCoverBoundModal = false">Close Modal</button>
+      <div style="display: flex; justify-content: center;">
+        <button class="modal-add-btn" @click="onAddCoverBound()">Add</button>
+      </div>
+      <!-- <button class="modal-close-btn" @click="isShowMCoverBoundModal = false">Close Modal</button> -->
     </div>
   </MyModal>
+  <transition name="scale">
+    <div  v-if="isExplain" style="" class="explain">
+        <img src="../assets/img/explain2.png" alt="">
+    </div>
+
+  </transition>
+  <div v-if="isXError" style="background-color: rgb(128, 209, 35); height: 200px;"> left should be smaller then rigth</div>
+  <div  v-if="isYError"> Top should be bigger then Bottom</div>
 </div>
 </template>
 
@@ -81,6 +94,8 @@ import MyModal from '../cmps/MyModal.vue';
     const storeBound = boundStore()
     const {mainBound,bounds,answerBound} = storeToRefs(storeBound)
     const runBtn = ref('lightgrey') // Make runBtn reactive using ref
+    const explainBtn = ref('rgb(197, 136, 255') // Make runBtn reactive using ref
+
     let configBtn = 'lightgrey'
     const boundsReactiv = reactive(bounds)
     const isCalculate = ref(false) // Make isCalculate reactive
@@ -90,7 +105,11 @@ import MyModal from '../cmps/MyModal.vue';
     const isDebounce = ref(false);
     const isShowMainBoundModal = ref(false);
     const isShowMCoverBoundModal = ref(false);
+    const isXError = ref(false);
+    const isYError = ref(false);
+    const isExplain = ref(false);
     let debounceTimer = null;
+    //const pdfPath = 'https://sugardaddy.co.il/users/search';  // Using the alias '@' to refer to the src directory
 
     // const bounds = storeBound.getBounds
     // const mainBound = storeBound.getMainBound
@@ -122,6 +141,12 @@ import MyModal from '../cmps/MyModal.vue';
       console.log('mainBoundX2:',mainBoundX2);
       console.log('mainBoundY1:',mainBoundY1);
       console.log('mainBoundY2:',mainBoundY2);
+      if(mainBoundX2<=mainBoundX1){
+        isXError.value = true
+      }
+      if(mainBoundY1<=mainBoundY2){
+        isYError.value = true
+      }
       const mainBound = {
         left: mainBoundX1,
         right: mainBoundX2,
@@ -239,6 +264,14 @@ import MyModal from '../cmps/MyModal.vue';
       }
       storeBound.addMainBound(mainBound)
   }
+  function onExplain() {
+    if(isExplain.value){
+      explainBtn.value = 'lightgrey'
+    }else{
+      explainBtn.value = 'grey'
+    }
+    isExplain.value = !isExplain.value;  // This will toggle the state each time the button is clicked
+  }
 // export default {
 //   name: 'BoundApp',
 //   components: {
@@ -269,6 +302,7 @@ body{
   border-radius: 8px;
   margin: 0.5vw  0.5vw;
   width: 30vw;
+  min-width: fit-content;
   padding: 1vw;
 
 }
@@ -397,11 +431,62 @@ button{
   width: 7vw;
   padding: 0.4vw 0.7vw;
 }
+.modal-add-btn{
+  width: 5vw;
+  padding: 0.4vw 0.7vw;
+  min-width: 70px;
+}
 .modal-inner-container{
   /* display: flex;
   flex-direction: column;
   padding: 0vw; */
 }
+
+
+.explain-btn{
+  margin: 0.2vw;
+  height: 4vh;
+  padding: 0.4vw 0.7vw;
+  /* background-color: rgb(197, 136, 255); */
+  background-color: v-bind('explainBtn');
+  transition: background-color 1s;
+}
+.explain{
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  /* top: 15vh;
+  z-index: 3;
+  width: 100vw;  */
+  top: 10vh;
+  /* left:20vw; */
+  z-index: 3;
+  width: fit-content;
+  height: 90%;
+  width: 100vw;
+  transform-origin: center center;
+}
+img{
+  border-radius: 8px;
+  box-shadow: 6px 5px 20px 0px;
+  
+}
+
+.scale-enter-active, .scale-leave-active {
+  transition: all 0.5s ease;
+  transform-origin: center center;
+}
+
+.scale-enter-from, .scale-leave-to {
+  transform: scale(0);
+  opacity: 0;
+}
+
+.scale-enter-to, .scale-leave-from {
+  transform: scale(1);
+  opacity: 1;
+}
+
 @media screen and (max-width: 600px) {
   .header{
     width: 70vw;
@@ -433,6 +518,18 @@ button{
   }
   .new-btn{
     padding: 3vw;
+  }
+  .explain-btn{
+    height: 7vw;
+  }
+  .explain{
+    top: 17vh;
+    height: 60%;
+    width: 100vw;
+
+  }
+  iframe{
+    width: 90vw;
   }
 }
 </style>
