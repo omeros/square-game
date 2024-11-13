@@ -30,11 +30,11 @@
     <div class="modal-inner-container">
       <h2 style="text-align: center;">Main Bound size</h2>
       <div>
-        <div>
+        <div class="bound-input-container">
           Top <input class="bound-input" type="number" v-model="mainBoundY1">
           Bottom <input class="bound-input" type="number" v-model="mainBoundY2">
         </div>
-        <div>
+        <div class="bound-input-container">
           Left <input class="bound-input" type="number" v-model="mainBoundX1">
           Right <input class="bound-input" type="number" v-model="mainBoundX2">
         </div>
@@ -49,11 +49,11 @@
     <div class="modal-inner-container">
       <h2 style="text-align: center;">Cover Bound size</h2>
       <div>
-        <div>
+        <div class="bound-input-container">
           Top <input class="bound-input" type="number" v-model="coverBoundY1">
           Bottom <input class="bound-input" type="number" v-model="coverBoundY2">
         </div>
-        <div>
+        <div class="bound-input-container">
           Left <input class="bound-input" type="number" v-model="coverBoundX1">
           Right <input class="bound-input" type="number" v-model="coverBoundX2">
         </div>
@@ -65,8 +65,8 @@
     </div>
   </MyModal>
   <transition name="scale">
-    <div  v-if="isExplain" style="" class="explain">
-        <img src="../assets/img/explain2.png" alt="">
+    <div  v-show="isExplain" style="" class="explain">
+        <img src="https://res.cloudinary.com/omerphoto/image/upload/v1731521344/explain2_sacwlc.png" alt="">
     </div>
 
   </transition>
@@ -308,9 +308,13 @@ body{
 }
 .bound-input{
   width: 4vw;
+  min-width: 50px;
   padding: 0.2vw 0.3vw;
   border-radius: 8px;
   margin: 0.2vw;
+}
+.bound-input-container{
+  padding: 0.3vw;
 }
 .input-containerr{
   /* width: 100vw; */
@@ -473,7 +477,7 @@ img{
 }
 
 .scale-enter-active, .scale-leave-active {
-  transition: all 0.5s ease;
+  transition: all 0.7s ease;
   transform-origin: center center;
 }
 
