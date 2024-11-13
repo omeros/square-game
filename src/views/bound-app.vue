@@ -136,7 +136,7 @@ import MyModal from '../cmps/MyModal.vue';
     }
 
     function onAddMainBound(){
-     // isShowMainBoundModal.value = true
+      isShowMainBoundModal.value = false
       console.log('mainBoundX1:',mainBoundX1);
       console.log('mainBoundX2:',mainBoundX2);
       console.log('mainBoundY1:',mainBoundY1);
@@ -157,6 +157,7 @@ import MyModal from '../cmps/MyModal.vue';
     }
     
     function onAddCoverBound(){
+      isShowMCoverBoundModal.value = false
       console.log('coverBoundX1:',coverBoundX1);
       console.log('coverBoundX2:',coverBoundX2);
       console.log('coverBoundY1:',coverBoundY1);
