@@ -89,6 +89,9 @@ import MyModal from '../cmps/MyModal.vue';
       if (debounceTimer) {
         clearTimeout(debounceTimer);
       }
+      if (colorSwapTimer) {
+        clearInterval(colorSwapTimer);
+  }
     });
 
     const storeBound = boundStore()
@@ -109,7 +112,7 @@ import MyModal from '../cmps/MyModal.vue';
     const isYError = ref(false);
     const isExplain = ref(false);
     let debounceTimer = null;
-    //const pdfPath = 'https://sugardaddy.co.il/users/search';  // Using the alias '@' to refer to the src directory
+    let colorSwapTimer = null;
 
     // const bounds = storeBound.getBounds
     // const mainBound = storeBound.getMainBound
@@ -192,6 +195,15 @@ import MyModal from '../cmps/MyModal.vue';
       isDebounce.value = true;
       isRandom.value = false
       runBtn.value  = 'lightgreen'
+      // Start color swapping
+      if (colorSwapTimer) {
+          clearInterval(colorSwapTimer);
+        }
+        let isLightGreen = true;
+        colorSwapTimer = setInterval(() => {
+          isLightGreen = !isLightGreen;
+          runBtn.value = isLightGreen ? 'lightgreen' : 'lightgrey';
+        }, 700);
       // Additional actions can be performed here when `isDebounce` becomes true
     }, 2000); // Debounce duration in milliseconds (e.g., 2000ms = 2 seconds)
 
@@ -220,6 +232,13 @@ import MyModal from '../cmps/MyModal.vue';
 
   async function run(){
     console.log('run function!');
+
+      // Stop the color swap timer
+    if (colorSwapTimer) {
+      clearInterval(colorSwapTimer);
+      colorSwapTimer = null;
+    }
+
     runBtn.value = 'rgb(247, 3, 15)'
     isRandom.value = false
     isFinished.value = false
