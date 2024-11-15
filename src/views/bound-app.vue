@@ -18,7 +18,7 @@
         </div>
         <div class="run-btn-container">
           <button class="explain-btn" @click="onExplain()">Explain</button>
-          <button class="run-btn "   :class="{ 'run-btn-active shining-text': isCalculate, 'run-btn-debaunce': isDebounce }"   @click="run()" :disabled="isCalculate">{{ isCalculate ? 'Calculating' : isFinished ? 'Finished' : 'Run' }} </button>
+          <button class="run-btn "   :class="{ 'shining-text run-btn-active ': isCalculate, 'run-btn-debaunce': isDebounce }"   @click="run()" :disabled="isCalculate">{{ isCalculate ? 'Calculating' : isFinished ? 'Finished' : 'Run' }} </button>
         </div>
       </div>
     </div>
