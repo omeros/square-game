@@ -523,7 +523,7 @@ img{
   position: absolute;  
   top: 0;  
   left: 0;  
-  width: 50%;  
+  width: 100%;  
   height: 100%;  
   background-image: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.8), transparent);  
   animation: shine 2s ease-in-out infinite;  
