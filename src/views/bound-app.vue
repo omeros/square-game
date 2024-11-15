@@ -18,7 +18,7 @@
         </div>
         <div class="run-btn-container">
           <button class="explain-btn" @click="onExplain()">Explain</button>
-          <button class="run-btn"   :class="{ 'run-btn-active': isCalculate, 'run-btn-debaunce': isDebounce }"   @click="run()" :disabled="isCalculate">{{ isCalculate ? 'Calculating' : isFinished ? 'Finished' : 'Run' }} </button>
+          <button class="run-btn "   :class="{ 'run-btn-active shining-text': isCalculate, 'run-btn-debaunce': isDebounce }"   @click="run()" :disabled="isCalculate">{{ isCalculate ? 'Calculating' : isFinished ? 'Finished' : 'Run' }} </button>
         </div>
       </div>
     </div>
@@ -510,6 +510,32 @@ img{
   transform: scale(1);
   opacity: 1;
 }
+
+
+.shining-text {  
+  position: relative;  
+  display: inline-block;  
+  overflow: hidden;  
+}  
+
+.shining-text::before {  
+  content: "";  
+  position: absolute;  
+  top: 0;  
+  left: 0;  
+  width: 50%;  
+  height: 100%;  
+  background-image: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.8), transparent);  
+  animation: shine 2s ease-in-out infinite;  
+} 
+@keyframes shine {  
+  0% {  
+    transform: translateX(-100%);  
+  }  
+  100% {  
+    transform: translateX(100%);  
+  }  
+} 
 
 @media screen and (max-width: 600px) {
   .header{
