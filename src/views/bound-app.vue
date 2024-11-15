@@ -321,7 +321,7 @@ body{
   box-shadow: 6px 5px 20px 0px;
   border-radius: 8px;
   margin: 0.5vw  0.5vw;
-  width: 30vw;
+  /* width: 30vw; */
   min-width: fit-content;
   padding: 1vw;
 
@@ -349,7 +349,8 @@ body{
 }
 .btn-container{
   display: flex;
-  width: 30vw;
+  
+  min-width: fit-content;
 }
 .btn-container-inner{
   display: flex;
