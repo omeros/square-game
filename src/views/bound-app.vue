@@ -9,7 +9,7 @@
             <button id="small-add" class="config-add-btn"  style="cursor: pointer; margin-left: 0vw;"   @click="openCoverBoundModal()"> Cover Rectangle</button>
           </div>
           <div class="defalutMainbound">
-            <button class="config-btn" :class="{'lazy-btn-activ': isLazy }" @click="defalutMainbound()">i'm lazy</button>
+            <button class="lazy-btn" :class="{'lazy-btn-activ': isLazy }" @click="defalutMainbound()">i'm lazy</button>
           </div>
           <div class="config-btn-container">
             <button class="new-btn"  :class="{'finish-btn-activ': isFinished }" @click="onClearBounds()">New</button>
@@ -390,6 +390,14 @@ body{
     padding: 0.4vw 0.6vw;
     transition: background-color 1s;
 }
+.lazy-btn{
+  cursor: pointer;
+  margin: 0.2vw;
+  background-color: v-bind('configBtn');
+  padding: 0.4vw 0.6vw;
+  
+  transition: background-color 1s;
+}
 .new-btn{
   cursor: pointer;
     margin: 0.2vw;
@@ -415,9 +423,9 @@ body{
     cursor: pointer;
     margin: 0.2vw;
     background-color: v-bind('runBtn');
+    height: 4vh;
     padding: 0.4vw 0.7vw;
     width: 5.3vw;
-    height: 2vw;
     min-width: fit-content;
     min-height: fit-content;
     transition: width 2s, height 2s, background-color 1s, font-size 1s;
@@ -560,7 +568,7 @@ img{
     }
     .run-btn{
       width: 18vw;
-      height: 7vw;
+      height: 9vw;
     }
     .run-btn-active {
     width: 23vw;
@@ -570,6 +578,9 @@ img{
   .config-btn{
     width: 18vw;
     height:7vw ;
+  }
+  .lazy-btn{
+    padding: 3vw;
   }
   .config-add-btn{
     width: 20vw;
@@ -583,7 +594,8 @@ img{
     padding: 3vw;
   }
   .explain-btn{
-    height: 7vw;
+    width: 18vw;
+    height: 9vw;
   }
   .explain{
     top: 17vh;
