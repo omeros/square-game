@@ -113,6 +113,7 @@ import MyModal from '../cmps/MyModal.vue';
     const isExplain = ref(false);
     let debounceTimer = null;
     let colorSwapTimer = null;
+    let isMainBoundAdded = false
 
     // const bounds = storeBound.getBounds
     // const mainBound = storeBound.getMainBound
@@ -157,6 +158,7 @@ import MyModal from '../cmps/MyModal.vue';
         down: mainBoundY2
       }
       storeBound.addMainBound(mainBound)
+      isMainBoundAdded = true
     }
     
     function onAddCoverBound(){
@@ -175,12 +177,18 @@ import MyModal from '../cmps/MyModal.vue';
     }
 
     function onClearBounds(){
+     // clearTimeout(debounceTimer);
+      clearInterval(colorSwapTimer);
+     
+      runBtn.value =  'lightgrey'
       isFinished.value = false
       isRandom.value = false
       isLazy.value = true
       isDebounce.value = false
       storeBound.clearBounds()
     }
+
+
     function onRandomBounds(){
       isRandom.value = true
 
@@ -231,45 +239,48 @@ import MyModal from '../cmps/MyModal.vue';
   }
 
   async function run(){
-    console.log('run function!');
-
-      // Stop the color swap timer
-    if (colorSwapTimer) {
-      clearInterval(colorSwapTimer);
-      colorSwapTimer = null;
+    if(isMainBoundAdded){
+      console.log('run function!');
+  
+        // Stop the color swap timer
+      if (colorSwapTimer) {
+        clearInterval(colorSwapTimer);
+        colorSwapTimer = null;
+      }
+  
+      runBtn.value = 'rgb(247, 3, 15)'
+      isRandom.value = false
+      isFinished.value = false
+      isDebounce.value = false
+      clearTimeout(debounceTimer);
+      if(!isCalculate.value){
+        try {
+            console.log(' run function - !isCalculate');
+            isCalculate.value = true
+            const ans = await boundService.postBoundToAlgoquest(mainBound.value, bounds.value)
+            storeBound.updateAnswerBound(ans)
+            isCalculate.value = false
+            isFinished.value = true
+            isDebounce.value = false;
+          } catch (error) {
+            console.error('Error running bound service:', error)
+          } finally {
+            runBtn.value = 'lightgreen' // Reset the button color if needed
+            setTimeout(()=>{
+              runBtn.value = 'lightgrey' // Reset the button color if needed
+            },500)
+          }
+      }else{
+        console.log('calculation in progress!');
+      }
+      //   left:ans.L ,
+      //   right: ans.right,
+      //   up: ans.T,
+      //   down: ans.B
+      // }
+      // console.log('run bounds:',bounds.value, 'mainBound:',mainBound.value );
+      isMainBoundAdded = false
     }
-
-    runBtn.value = 'rgb(247, 3, 15)'
-    isRandom.value = false
-    isFinished.value = false
-    isDebounce.value = false
-    clearTimeout(debounceTimer);
-    if(!isCalculate.value){
-      try {
-          console.log(' run function - !isCalculate');
-          isCalculate.value = true
-          const ans = await boundService.postBoundToAlgoquest(mainBound.value, bounds.value)
-          storeBound.updateAnswerBound(ans)
-          isCalculate.value = false
-          isFinished.value = true
-          isDebounce.value = false;
-        } catch (error) {
-          console.error('Error running bound service:', error)
-        } finally {
-          runBtn.value = 'lightgreen' // Reset the button color if needed
-          setTimeout(()=>{
-            runBtn.value = 'lightgrey' // Reset the button color if needed
-          },500)
-        }
-    }else{
-      console.log('calculation in progress!');
-    }
-    //   left:ans.L ,
-    //   right: ans.right,
-    //   up: ans.T,
-    //   down: ans.B
-    // }
-    // console.log('run bounds:',bounds.value, 'mainBound:',mainBound.value );
   }
   function defalutMainbound(){
     const screenWidth = window.innerWidth - (window.innerWidth/50) ; // Get screen width
@@ -277,12 +288,13 @@ import MyModal from '../cmps/MyModal.vue';
     isLazy.value = false
     isRandom.value = true
     const mainBound = {
-        left: 0,
+        left: screenWidth/200,
         right: screenWidth,
         up: screenHeight,
         down: 0
       }
       storeBound.addMainBound(mainBound)
+      isMainBoundAdded = true
   }
   function onExplain() {
     if(isExplain.value){

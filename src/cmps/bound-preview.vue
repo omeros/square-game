@@ -42,51 +42,73 @@
       // Non-answer bounds
       if (!props.main) {
         // Cover bound
+        if(props.bound.right!==null){
         const red = getRandomInt(0, 255);
         const green = getRandomInt(0, 255);
         const blue = getRandomInt(0, 255);
         bgcColor.value = `rgba(${red}, ${green}, ${blue}, 0.9)`;
         border.value = '2px solid black';
         zIndex.value = '1';
+      }else{
+          border.value = ''
+        }
       } else {
         // Main bound
-        bgcColor.value = '#2d68f2';
-        border.value = '2px solid black';
-        zIndex.value = '1';
+        if((props.bound.right!==null)&&(props.main)){
+          bgcColor.value = '#2d68f2';
+          border.value = '2px solid black';
+          zIndex.value = '1';
+        }else{
+          border.value = ''
+        }
+        }
+        
+        // Update styles
+        elementStyle.value.backgroundColor = bgcColor.value;
+        elementStyle.value.border = border.value;
+        elementStyle.value.zIndex = zIndex.value;
+        
+        // Set dimensions and position immediately
+        if (props.bound) {
+          const width = props.bound.right - props.bound.left;
+          const height = props.bound.up - props.bound.down;
+          elementStyle.value.width = `${width}px`;
+          elementStyle.value.height = `${height}px`;
+          elementStyle.value.top = `${props.bound.down}px`;
+          elementStyle.value.left = `${props.bound.left}px`;
+        }
+        
+        // Remove the animation class if present
+        if (elementRef.value) {
+          elementRef.value.classList.remove('scale-in');
+        }
+      } else {
+        
+        // Answer bound
+        if(props.bound.right){
+          console.log('on props.answer===== yes ====>:',props.bound.right);
+        bgcColor.value = 'transparent';
+        border.value = '5px dashed black';
+        zIndex.value = '10';
+        
+        // Update styles
+        elementStyle.value.backgroundColor = bgcColor.value;
+        elementStyle.value.border = border.value;
+        elementStyle.value.zIndex = zIndex.value;
+        }else{
+          console.log('on props.answer===== no ====>:',props.bound.right);
+        
+          bgcColor.value = 'transparent';
+          border.value = '0px solid black';
+          zIndex.value = '10';
+          console.log('on props.answer===== border.value====>:',border.value);
+          elementStyle.value.backgroundColor = bgcColor.value;
+        elementStyle.value.border = border.value;
+        elementStyle.value.zIndex = zIndex.value;
+        }
+        // The dimensions and animation are handled in the watcher
       }
   
-      // Update styles
-      elementStyle.value.backgroundColor = bgcColor.value;
-      elementStyle.value.border = border.value;
-      elementStyle.value.zIndex = zIndex.value;
-  
-      // Set dimensions and position immediately
-      if (props.bound) {
-        const width = props.bound.right - props.bound.left;
-        const height = props.bound.up - props.bound.down;
-        elementStyle.value.width = `${width}px`;
-        elementStyle.value.height = `${height}px`;
-        elementStyle.value.top = `${props.bound.down}px`;
-        elementStyle.value.left = `${props.bound.left}px`;
-      }
-  
-      // Remove the animation class if present
-      if (elementRef.value) {
-        elementRef.value.classList.remove('scale-in');
-      }
-    } else {
-      // Answer bound
-      bgcColor.value = 'transparent';
-      border.value = '5px dashed black';
-      zIndex.value = '10';
-  
-      // Update styles
-      elementStyle.value.backgroundColor = bgcColor.value;
-      elementStyle.value.border = border.value;
-      elementStyle.value.zIndex = zIndex.value;
-  
-      // The dimensions and animation are handled in the watcher
-    }
   });
   
   // Watch for changes in props.bound
@@ -119,9 +141,9 @@
   
       // Force reflow to ensure the browser registers the class removal
       void elementRef.value.offsetWidth;
+    // Add the class back to start the animation
+    elementRef.value.classList.add('scale-in');
   
-      // Add the class back to start the animation
-      elementRef.value.classList.add('scale-in');
     }
   }
   
