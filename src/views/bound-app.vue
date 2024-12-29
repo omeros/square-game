@@ -10,6 +10,7 @@
           </div>
           <div class="defalutMainbound">
             <button class="lazy-btn" :class="{'lazy-btn-activ': isLazy }" @click="defalutMainbound()">i'm lazy</button>
+            <button class="explain-btn" @click="onExplain()">Explain</button>
           </div>
           <div class="config-btn-container">
             <button class="new-btn"  :class="{'finish-btn-activ': isFinished }" @click="onClearBounds()">New</button>
@@ -17,7 +18,6 @@
           </div>
         </div>
         <div class="run-btn-container">
-          <button class="explain-btn" @click="onExplain()">Explain</button>
           <button class="run-btn "   :class="{ 'shining-text run-btn-active ': isCalculate, 'run-btn-debaunce': isDebounce }"   @click="run()" :disabled="isCalculate">{{ isCalculate ? 'Calculating' : isFinished ? 'Finished' : 'Run' }} </button>
         </div>
       </div>
@@ -414,7 +414,8 @@ body{
   display: flex;
   justify-content: center;
   padding: 0.3vw; 
-  padding-top: 0vw; 
+  padding-top: 0vw;
+ 
 }
 .run-btn-debaunce{
   background-color: lightgreen;
@@ -441,6 +442,8 @@ body{
 .defalutMainbound{
   /* padding: 0.5vw;  */
   padding-top: 0vw;
+  display: flex;
+  flex-direction: column;
 }
 .add-rec-btn{
   /* padding: 0.2vw; */
