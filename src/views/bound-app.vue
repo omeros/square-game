@@ -18,7 +18,7 @@
           </div>
         </div>
         <div class="run-btn-container">
-          <button class="run-btn "   :class="{ 'shining-text run-btn-active ': isCalculate, 'run-btn-debaunce': isDebounce }"   @click="run()" :disabled="isCalculate">{{ isCalculate ? 'Calculating' : isFinished ? 'Finished' : 'Run' }} </button>
+          <button class="run-btn "   :class="{ 'shining-text run-btn-active': isCalculate, 'run-btn-debaunce': isDebounce }"   @click="run()" :disabled="isCalculate">{{ isCalculate ? 'Calculating' : isFinished ? 'Finished' : 'Run' }} </button>
         </div>
       </div>
     </div>
@@ -434,7 +434,7 @@ body{
 .run-btn-active {
   width: 7vw;
   height: 3.5vw;
-  font-size: medium;
+  font-size: large;
 }
 /* .run-btn-debaunce{
   background-color: lightgreen;
